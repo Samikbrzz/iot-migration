@@ -1,0 +1,17 @@
+{
+  "name": "iot-migration",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@mobiliz/utils": "^1.1.0",
+    "cassandra-driver": "^4.6.4",
+    "mssql": "^9.0.1",
+    "pg": "^8.8.0"
+  }
+}

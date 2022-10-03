@@ -1,0 +1,32 @@
+{
+  "platformApiDb": {
+    "user": "iot_user",
+    "host": "192.168.81.242",
+    "database": "iot_db",
+    "password": "ZjlmYzg3MTQ4ZmY2NzM5MDJhZTFlM2Y3",
+    "port": 32432
+  },
+  "mobilizIotDb": {
+    "user": "iot_user",
+    "host": "192.168.81.242",
+    "database": "mobiliziotdb",
+    "password": "ZjlmYzg3MTQ4ZmY2NzM5MDJhZTFlM2Y3",
+    "port": 30432
+  },
+  "ngDb": {
+    "user": "test_sso",
+    "password": "test_sso",
+    "database": "eMOVE_TEST",
+    "server": "192.168.80.200",
+    "options": {
+      "trustServerCertificate": true
+    }
+  },
+  "nextDb": {
+    "user": "iot_user",
+    "host": "localhost",
+    "database": "mobiliziotdb",
+    "password": "123",
+    "port": 5432
+  }
+}
