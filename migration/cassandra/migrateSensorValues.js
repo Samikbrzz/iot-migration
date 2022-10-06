@@ -20,7 +20,7 @@ async function migrateSensorValues() {
     for (let i = 0; i < tables.rows.length; i++) {
         const sensor = tables.rows[i].name;
         if (sensor.includes("sensor_")) {
-            console.log("Sıradaki Sensör Tablosu= " + sensor);
+            console.log("Processing = " + sensor + " table.");
             if (sensor.endsWith("_long")) {
                 const sensorName = sensor.split("sensor_")[1].split("_long")[0];
                 const sensorInputQueryForLong = 'Insert into iot.sensor_values (device_id, sensor_name, ts, v_long) ' +

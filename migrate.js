@@ -17,7 +17,7 @@ async function migrate() {
         await migrateDevices().then(Console.log("Devices migration completed."));
         await migrationCommands().then(Console.log("Command migration completed."));
         await migrationUISettings().then(Console.log("UI Settings migration completed."));
-        await migrateSensorValues().then(Console.log("Sensor values migration completed!"));
+        await migrateSensorValues().then(Console.log("Sensor values migration is starting..."));
         await process.exit();
     } catch (e) {
         console.log("Error " + e.stack);
