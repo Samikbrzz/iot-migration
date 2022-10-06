@@ -51,7 +51,7 @@ async function getDevicesByIdAndInsert(devicesFromMobilizIotDbRows, selectQuery,
                     delete attributes["location_long"];
                     delete attributes["location_lat"];
 
-                    const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType;
+                    const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType.toUpperCase();;
 
                     delete attributes["updateTime"];
                     delete attributes["position_type"];
