@@ -44,4 +44,4 @@ async function insertDeviceModelResults(modelResRows, insertQuery) {
     }
 }
 
-module.exports = {migrateModels};
+module.exports = migrateModels;

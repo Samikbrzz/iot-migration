@@ -78,4 +78,4 @@ function sensorMappingQueryForTabular() {
     `;
 }
 
-module.exports = {migrateSensorMappings};
+module.exports = migrateSensorMappings;

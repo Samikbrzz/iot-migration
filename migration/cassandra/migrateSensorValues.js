@@ -78,5 +78,5 @@ async function insertSensorValues(result, sensorInsertQuery, sensorName) {
     }
 }
 
-module.exports = {migrateSensorValues};
+module.exports = migrateSensorValues;
 

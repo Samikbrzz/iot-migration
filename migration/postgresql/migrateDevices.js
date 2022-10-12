@@ -64,4 +64,4 @@ async function getDevicesByIdAndInsert(devicesFromMobilizIotDbRows, selectQuery,
     }
 }
 
-module.exports = {migrateDevices};
+module.exports = migrateDevices;

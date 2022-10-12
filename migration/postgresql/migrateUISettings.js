@@ -28,4 +28,4 @@ async function insertUISettings(insertQuery, uiSettingsRows) {
     }
 }
 
-module.exports = {migrationUISettings};
+module.exports = migrationUISettings;

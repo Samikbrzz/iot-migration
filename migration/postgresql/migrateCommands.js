@@ -21,24 +21,28 @@ async function migrationCommands() {
 
 async function insertCommands(insertQuery, commandRows) {
     for (let i = 0; i < commandRows.length; i++) {
-        await client.nextDb.query(insertQuery,
-            [
-                commandRows[i].id,
-                commandRows[i].company_id,
-                commandRows[i].name,
-                JSON.stringify(commandRows[i].params),
-                commandRows[i].template,
-                commandRows[i].predefined,
-                commandRows[i].created_by,
-                commandRows[i].created_at,
-                commandRows[i].modified_by,
-                commandRows[i].updated_at,
-            ], (err, res) => {
-                if (err)
-                    console.log(err.stack);
-            })
+        try {
+            await client.nextDb.query(insertQuery,
+                [
+                    commandRows[i].id,
+                    commandRows[i].company_id,
+                    commandRows[i].name,
+                    JSON.stringify(commandRows[i].params),
+                    commandRows[i].template,
+                    commandRows[i].predefined,
+                    commandRows[i].created_by,
+                    commandRows[i].created_at,
+                    commandRows[i].modified_by,
+                    commandRows[i].updated_at,
+                ], (err, res) => {
+                    if (err)
+                        console.log(err.stack);
+                })
+        } catch (e) {
+            console.error(e);
+        }
     }
 
 }
 
-module.exports = {migrationCommands};
+module.exports = migrationCommands;
