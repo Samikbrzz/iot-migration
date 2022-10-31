@@ -16,6 +16,8 @@ async function getSensorValuesFromFolder() {
                     if (path.extname(file) === ".csv")
                         await parseFileName(file)
                 }
+                console.log("Migrated sensor values.")
+                process.exit()
             }
         })
     } catch (e) {

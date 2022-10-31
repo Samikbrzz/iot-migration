@@ -21,8 +21,7 @@ async function migrate() {
         await updateSequences().then(Console.log("Updated sequences."));
         client.platformApiDb.end();
         client.mobilizIotDb.end();
-        await getSensorValuesFromFolder().then(Console.log("Migrated sensor values."));
-        await process.exit();
+        await getSensorValuesFromFolder().then(Console.log("Migration is starting for sensor values."));
     } catch (e) {
         console.log("Error " + e.stack);
         process.exit();
