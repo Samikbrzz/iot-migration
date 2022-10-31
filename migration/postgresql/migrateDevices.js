@@ -38,29 +38,21 @@ async function insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIo
 
 async function getDevicesByIdAndInsert(devicesFromMobilizIotDbRows, selectQuery, insertQuery) {
     for (let i = 0; i < devicesFromMobilizIotDbRows.length; i++) {
-        await client.platformApiDb.query(selectQuery,
-            [
-                devicesFromMobilizIotDbRows[i].id
-            ], async (err, res) => {
-                if (err) {
-                    console.log(err.stack);
-                } else {
-                    const deviceRows = res.rows[0];
-                    const attributes = devicesFromMobilizIotDbRows[i].attributes;
+        const res = await client.platformApiDb.query(selectQuery, [devicesFromMobilizIotDbRows[i].id]);
 
-                    delete attributes["location_long"];
-                    delete attributes["location_lat"];
+        const deviceRows = res.rows[0];
+        const attributes = devicesFromMobilizIotDbRows[i].attributes;
 
-                    const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType.toUpperCase();;
+        delete attributes["location_long"];
+        delete attributes["location_lat"];
 
-                    delete attributes["updateTime"];
-                    delete attributes["position_type"];
-                    delete attributes["staticPosition"];
+        const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType.toUpperCase();
 
-                    await insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIotDbRows, i, attributes, positionType);
-                }
+        delete attributes["updateTime"];
+        delete attributes["position_type"];
+        delete attributes["staticPosition"];
 
-            })
+        await insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIotDbRows, i, attributes, positionType);
     }
 }
 
