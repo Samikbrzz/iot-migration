@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node migrate.js"
   },
-  "author": "",
+  "author": "samik",
   "license": "ISC",
   "dependencies": {
     "@mobiliz/utils": "^1.1.0",
     "cassandra-driver": "^4.6.4",
+    "fs": "^0.0.1-security",
     "mssql": "^9.0.1",
-    "pg": "^8.8.0"
+    "pg": "^8.8.0",
+    "pg-format": "^1.0.4"
   }
 }
