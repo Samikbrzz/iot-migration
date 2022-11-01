@@ -1,27 +1,31 @@
 const client = require("./migration/postgresql/client");
-const migrateModels = require("./migration/postgresql/migrateModels");
-const migrateSensorMappings = require("./migration/postgresql/migrateSensorMappings");
-const migrateDevices = require("./migration/postgresql/migrateDevices");
-const migrateSensorValues = require("./migration/cassandra/migrateSensorValues");
-const migrationUISettings = require("./migration/postgresql/migrateUISettings");
-const migrationCommands = require("./migration/postgresql/migrateCommands");
+const {migrateModels} = require("./migration/postgresql/migrateModels");
+const {migrateSensorMappings} = require("./migration/postgresql/migrateSensorMappings");
+const {migrateDevices} = require("./migration/postgresql/migrateDevices");
+const {migrationUISettings} = require("./migration/postgresql/migrateUISettings");
+const {migrationCommands} = require("./migration/postgresql/migrateCommands");
+const Console = require("console");
+const {updateSequences} = require("./migration/postgresql/updateSequences");
+const {getSensorValuesFromFolder} = require("./migration/cassandra/migrateSensorValuesFromBackupFile");
 
 async function migrate() {
     try {
         client.platformApiDb.connect();
         client.mobilizIotDb.connect();
         client.nextDb.connect();
-        await migrateModels().then(console.log("Device Model Migration completed."));
-        await migrateSensorMappings().then(console.log("Sensor mappings migration completed"));
-        await migrateDevices().then(console.log("Devices migration completed."));
-        await migrationCommands().then(console.log("Command migration completed."));
-        await migrationUISettings().then(console.log("UI Settings migration completed."));
-        await migrateSensorValues().then(console.log("Sensor values migration is starting..."));
+        await migrateModels();
+        await migrateSensorMappings();
+        await migrateDevices();
+        await migrationCommands();
+        await migrationUISettings();
+        await updateSequences();
+        client.platformApiDb.end();
+        client.mobilizIotDb.end();
+        await getSensorValuesFromFolder().then(Console.log("Migration is starting for sensor values."));
     } catch (e) {
         console.log("Error " + e.stack);
         process.exit();
     }
 }
-
 
 migrate();

@@ -9,8 +9,8 @@ async function migrateDevices() {
     const devicesFromMobilizIotDbRows = devicesFromMobilizIotDb.rows;
     const selectQuery = 'Select * from devices where id = $1';
 
-    const insertQuery = 'Insert into iot.devices (id, model_id, name, company_id, attributes, position_type, longitude, latitude, created_by, created_date, modified_by, modified_date) ' +
-        'Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) ';
+    const insertQuery = 'Insert into iot.devices (id, model_id, name, serial_number, company_id, attributes, position_type, longitude, latitude, created_by, created_date, modified_by, modified_date) ' +
+        'Values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) ';
 
     await getDevicesByIdAndInsert(devicesFromMobilizIotDbRows, selectQuery, insertQuery);
 }
@@ -21,6 +21,7 @@ async function insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIo
             deviceRows.id,
             devicesFromMobilizIotDbRows[i].model_id,
             devicesFromMobilizIotDbRows[i].name,
+            deviceRows.serial_number,
             devicesFromMobilizIotDbRows[i].company_id,
             JSON.stringify(attributes),
             positionType,
@@ -38,29 +39,22 @@ async function insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIo
 
 async function getDevicesByIdAndInsert(devicesFromMobilizIotDbRows, selectQuery, insertQuery) {
     for (let i = 0; i < devicesFromMobilizIotDbRows.length; i++) {
-        await client.platformApiDb.query(selectQuery,
-            [
-                devicesFromMobilizIotDbRows[i].id
-            ], async (err, res) => {
-                if (err) {
-                    console.log(err.stack);
-                } else {
-                    const deviceRows = res.rows[0];
-                    const attributes = devicesFromMobilizIotDbRows[i].attributes;
+        const res = await client.platformApiDb.query(selectQuery, [devicesFromMobilizIotDbRows[i].id]);
 
-                    delete attributes["location_long"];
-                    delete attributes["location_lat"];
+        const deviceRows = res.rows[0];
+        const attributes = devicesFromMobilizIotDbRows[i].attributes;
 
-                    const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType.toUpperCase();;
+        delete attributes["location_long"];
+        delete attributes["location_lat"];
 
-                    delete attributes["updateTime"];
-                    delete attributes["position_type"];
-                    delete attributes["staticPosition"];
+        const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType.toUpperCase();
 
-                    await insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIotDbRows, i, attributes, positionType);
-                }
+        delete attributes["updateTime"];
+        delete attributes["positionType"];
+        delete attributes["staticPosition"];
+        delete attributes["favouriteSensors"];
 
-            })
+        await insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIotDbRows, i, attributes, positionType);
     }
 }
 
