@@ -13,12 +13,12 @@ async function migrate() {
         client.platformApiDb.connect();
         client.mobilizIotDb.connect();
         client.nextDb.connect();
-        await migrateModels().then(Console.log("Device Model Migration completed."));
-        await migrateSensorMappings().then(Console.log("Sensor mappings migration completed"));
-        await migrateDevices().then(Console.log("Devices migration completed."));
-        await migrationCommands().then(Console.log("Command migration completed."));
-        await migrationUISettings().then(Console.log("UI Settings migration completed."));
-        await updateSequences().then(Console.log("Updated sequences."));
+        await migrateModels();
+        await migrateSensorMappings();
+        await migrateDevices();
+        await migrationCommands();
+        await migrationUISettings();
+        await updateSequences();
         client.platformApiDb.end();
         client.mobilizIotDb.end();
         await getSensorValuesFromFolder().then(Console.log("Migration is starting for sensor values."));

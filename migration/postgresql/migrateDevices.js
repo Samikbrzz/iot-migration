@@ -50,8 +50,9 @@ async function getDevicesByIdAndInsert(devicesFromMobilizIotDbRows, selectQuery,
         const positionType = devicesFromMobilizIotDbRows[i].attributes.positionType.toUpperCase();
 
         delete attributes["updateTime"];
-        delete attributes["position_type"];
+        delete attributes["positionType"];
         delete attributes["staticPosition"];
+        delete attributes["favouriteSensors"];
 
         await insertDeviceResults(insertQuery, deviceRows, devicesFromMobilizIotDbRows, i, attributes, positionType);
     }

@@ -16,7 +16,7 @@ async function getSensorValuesFromFolder() {
                     if (path.extname(file) === ".csv")
                         await parseFileName(file)
                 }
-                console.log("Migrated sensor values.")
+                console.log("Migrated values.")
                 process.exit()
             }
         })
@@ -71,9 +71,19 @@ async function readFilesLineByLine(file, sensorName, sensorInsertQuery, dataType
         }
         values.push(data)
     }
-
+    //console.log(Math.round(values.length / 100000))
     if (values.length > 0) {
-        await client.nextDb.query(format(sensorInsertQuery, values));
+        if (values.length > 200000) {
+            let index = 0;
+            let incrementBy= 100000;
+            for (let i = 0; i < Math.round(values.length / 100000); i++) {
+                await client.nextDb.query(format(sensorInsertQuery, values.slice(index, incrementBy)));
+                index = incrementBy;
+                incrementBy += 100000;
+            }
+        } else {
+            await client.nextDb.query(format(sensorInsertQuery, values));
+        }
     }
 }
 

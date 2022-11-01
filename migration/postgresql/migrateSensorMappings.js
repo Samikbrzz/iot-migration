@@ -8,6 +8,7 @@ async function migrateSensorMappings() {
     const queryForTabular = sensorMappingQueryForTabular();
 
     const sql = queryForScalar + queryForFormula + queryForDigital + queryForTabular;
+    console.log(sql);
     const sensorMappings = await client.platformApiDb.query(sql);
     const sensorMappingsRows = sensorMappings.rows;
 
@@ -19,6 +20,14 @@ async function migrateSensorMappings() {
 
 async function insertSensorMappingResults(sensorMappingsRows, insertQuery) {
     for (let i = 0; i < sensorMappingsRows.length; i++) {
+        let trueLabel = sensorMappingsRows[i].true_label;
+        let falseLabel = sensorMappingsRows[i].false_label;
+        if(trueLabel !== null && trueLabel !== undefined && trueLabel.includes('"')) {
+            trueLabel = trueLabel.replaceAll('"', '');
+        }
+        if (falseLabel !== null && falseLabel !== undefined && falseLabel.includes('"')) {
+            falseLabel = falseLabel.replaceAll('"', '');
+        }
         await client.nextDb.query(insertQuery,
             [
                 sensorMappingsRows[i].id,
@@ -27,8 +36,8 @@ async function insertSensorMappingResults(sensorMappingsRows, insertQuery) {
                 sensorMappingsRows[i].element_name,
                 sensorMappingsRows[i].sensor_name,
                 sensorMappingsRows[i].data_type,
-                sensorMappingsRows[i].true_label,
-                sensorMappingsRows[i].false_label,
+                trueLabel,
+                falseLabel,
                 sensorMappingsRows[i].formula,
                 sensorMappingsRows[i].map,
                 sensorMappingsRows[i].created_by,
