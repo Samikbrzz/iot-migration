@@ -21,4 +21,4 @@ async function updateSequences() {
     await client.nextDb.query('SELECT setval(\'iot.ui_setting_id_seq\', $1)', [uiSettingsSeqValue]);
 }
 
-module.exports = {updateSequences};
+module.exports = updateSequences;

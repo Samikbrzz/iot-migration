@@ -87,4 +87,4 @@ async function readFilesLineByLine(file, sensorName, sensorInsertQuery, dataType
     }
 }
 
-module.exports = {getSensorValuesFromFolder};
+module.exports = getSensorValuesFromFolder;
