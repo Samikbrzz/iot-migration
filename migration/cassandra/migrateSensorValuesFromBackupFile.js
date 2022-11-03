@@ -41,11 +41,16 @@ async function parseFileName(file) {
             const sensorName = file.split("sensor_")[1].split("_float")[0];
             const sensorInputQueryForFloat = 'Insert into iot.sensor_values (device_id, sensor_name, ts, v_double) Values %L ';
             await readFilesLineByLine(file, sensorName, sensorInputQueryForFloat, '');
+        } else if (file.endsWith("_value.csv")) {
+            if (file === 'sensor_latest_value.csv') {
+                const sensorLatestValueQuery = 'Insert into iot.sensor_latest_values (device_id, sensor_name, data_type, ts, v_boolean, v_long, v_double, v_string) Values %L';
+                await readFilesLineByLineForLatestValues(file, sensorLatestValueQuery);
+            }
         }
     }
 }
 
-async function readFilesLineByLine(file, sensorName, sensorInsertQuery, dataType) {
+function fileStream(file) {
     const f = '/home/sami/Documents/CassandraBackup/' + file;
     const fileStream = fs.createReadStream(f);
 
@@ -53,37 +58,89 @@ async function readFilesLineByLine(file, sensorName, sensorInsertQuery, dataType
         input: fileStream,
         crlfDelay: Infinity
     });
+    return rl;
+}
+
+async function readFilesLineByLine(file, sensorName, sensorInsertQuery, dataType) {
+    const rl = fileStream(file);
 
     let values = [];
     for await (const line of rl) {
-        let data = [];
+        let data;
         if (dataType === 'string' && line.includes(',"')) {
-            let formattedData = [];
+            let formattedData;
             data = line.split(',"');
             formattedData = data[0].split(',');
             formattedData.push(data[1]);
-            data = [];
             formattedData.splice(1, 1, sensorName);
+            formattedData[3] = formattedData[3].replace('"', '');
+            data = [];
             data.push(formattedData);
+            data = data[0];
         } else {
+            data = [];
             data = line.split(',');
             data.splice(1, 1, sensorName);
         }
         values.push(data)
     }
-    //console.log(Math.round(values.length / 100000))
+
     if (values.length > 0) {
         if (values.length > 200000) {
             let index = 0;
-            let incrementBy= 100000;
+            let incrementBy = 100000;
             for (let i = 0; i < Math.round(values.length / 100000); i++) {
-                await client.nextDb.query(format(sensorInsertQuery, values.slice(index, incrementBy)));
+                //await client.nextDb.query(format(sensorInsertQuery, values.slice(index, incrementBy)));
                 index = incrementBy;
                 incrementBy += 100000;
             }
         } else {
             await client.nextDb.query(format(sensorInsertQuery, values));
         }
+    }
+}
+
+async function readFilesLineByLineForLatestValues(file, sensorLatestValueQuery) {
+    const rl = fileStream(file);
+
+    let values = [];
+    for await (const line of rl) {
+        let data
+        if (!line.includes('"')) {
+            data = line.split(',');
+        } else {
+            let formattedData;
+            data = line.split(',"');
+            formattedData = data[0].split(',');
+            formattedData.push(data[1]);
+            formattedData[9] = formattedData[9].replace('"', '');
+            data = [];
+            data.push(formattedData);
+            data = data[0];
+        }
+
+        if (data[2] === 'FLOAT') {
+            data[8] = data[6];
+            data.splice(6, 1);
+        } else if (data[2] === 'LONG') {
+            data[7] = data[8];
+            data.splice(8, 1, null);
+            data.splice(5, 1);
+        } else {
+            data.splice(7, 1);
+        }
+        data.splice(4, 1);
+        for (let i = 0; i < data.length; i++) {
+            if (data[i] === '') {
+                data[i] = null;
+            }
+        }
+
+        values.push(data);
+    }
+
+    if (values.length > 0) {
+        await client.nextDb.query(format(sensorLatestValueQuery, values));
     }
 }
 

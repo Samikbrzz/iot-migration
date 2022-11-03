@@ -9,6 +9,7 @@ const getSensorValuesFromFolder = require("./migration/cassandra/migrateSensorVa
 
 async function migrate() {
     try {
+        console.log("Migration is starting")
         client.platformApiDb.connect();
         client.mobilizIotDb.connect();
         client.nextDb.connect();
@@ -20,7 +21,7 @@ async function migrate() {
         await updateSequences();
         client.platformApiDb.end();
         client.mobilizIotDb.end();
-        await getSensorValuesFromFolder().then(console.log("Migration is starting for sensor values."));
+        //await getSensorValuesFromFolder();
     } catch (e) {
         console.log("Error " + e.stack);
         process.exit();
