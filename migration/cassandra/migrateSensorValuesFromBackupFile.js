@@ -4,8 +4,9 @@ const path = require('path');
 const readline = require('readline');
 const format = require('pg-format');
 
+const pathString = '/home/sami/Documents/CassandraBackup';
+
 async function getSensorValuesFromFolder() {
-    const pathString = '/home/sami/Documents/CassandraBackup';
 
     try {
         fs.readdir(pathString, async (err, files) => {
@@ -51,7 +52,7 @@ async function parseFileName(file) {
 }
 
 function fileStream(file) {
-    const f = '/home/sami/Documents/CassandraBackup/' + file;
+    const f = pathString + '/' + file;
     const fileStream = fs.createReadStream(f);
 
     const rl = readline.createInterface({
